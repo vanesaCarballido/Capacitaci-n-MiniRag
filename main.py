@@ -82,7 +82,7 @@ resultados = collection.query(query_embeddings=[arreglarFrase], n_results=2)
 
 # Mostrar resultados
 print("\nLa frase que ingresó el usuario es:", fraseIngresada)
-print("\n")
+print("______________________________________________________________________")
 print("\nLas frases más similares en la lista de frases de filósofos son:")
 for frase, meta in zip(resultados["documents"][0], resultados["metadatas"][0]):
     print(f'Frase:{frase}')
