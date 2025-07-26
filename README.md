@@ -8,9 +8,9 @@ _________________________________
 
 ## 💚  ¿Qué hace mi proyecto de RAG? 
 
-✨ Toma una frase ingresada por el usuario, la transforma en un vector numérico (embedding) para que una inteligencia artificial (en este caso Gemini) pueda entender su significado
+✨ Toma una frase ingresada por el usuario, la transforma en un vector numérico (embedding) para que una inteligencia artificial (en este caso Gemini) pueda entender su significado.
 
-✨ Luego busca en una base de datos de frases filosóficas (en este caso ChromaDB) aquellas que sean más parecidas en su sentido
+✨ Busca en una base de datos de frases filosóficas (en este caso ChromaDB) aquellas que sean más parecidas en su sentido.
 
 ✨ Finalmente devuelve las 2 frases más similares, incluyendo el nombre del filósofo que las dijo.
 _______________
