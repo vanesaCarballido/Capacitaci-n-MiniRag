@@ -16,11 +16,11 @@ _________________________________
 _______________
 
 ## 💜 Ejecución por consola:
--Clonar repositorio
+- Clonar repositorio
 
--Instalar requeriments, escribir en consola: "pip install -r requirements.txt"
+- Instalar requeriments, escribir en consola: "pip install -r requirements.txt"
 
--Correr el main: "py main.py"
+- Correr el main: "py main.py"
 _______________
 
 ## 🌸 Pasos luego de ejecutar el programa main.py: 
