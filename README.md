@@ -31,6 +31,5 @@ _______________
 
 - Luego se ingresa la frase, dando como resultado:
 
-
-<img width="400" height="200" alt="Captura de pantalla 2025-07-26 162812" src="https://github.com/user-attachments/assets/620119d1-2bae-4b4f-a110-6065feba29d5" />
+<img width="600" height="400" alt="Captura de pantalla 2025-07-26 174201" src="https://github.com/user-attachments/assets/52292d63-ffc8-4615-a599-11b6db96fb67" />
 
