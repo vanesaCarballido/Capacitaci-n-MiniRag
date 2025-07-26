@@ -4,18 +4,18 @@ import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
-# Configuración de Gemini con mi key
+#Configuración de Gemini con mi key:
 geminiApiKey = "AIzaSyBYWF_lqUEDttKs7WkpXftpAt0vOeZwNq8"
 genai.configure(api_key=geminiApiKey) #siempre api_key, eso no se cambia, el nombre de la variable de nuestra key si
 
-# Configuración de ChromaDB
+#Configuración de ChromaDB:
 client = chromadb.Client(Settings(anonymized_telemetry=False))
 collection = client.get_or_create_collection("RagDeFilosofia")
 
-# Cargar modelo de embeddings
+#Cargar modelo de embeddings para convertir frases en vectores:
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
-
+#Frases de los filósofos
 frases = [
     #Aristóteles:
     {"frase": "El alma nunca piensa sin una imagen.", "autor": "Aristóteles"},
@@ -61,11 +61,33 @@ frases = [
     {"frase": "Es peor cometer una injusticia que sufrirla.", "autor": "Socrates"},
     {"frase": "El alma se cura con ciertos encantamientos, y esos encantamientos son las palabras.", "autor": "Socrates"},
     {"frase": "Cuando el debate se pierde, la calumnia es la herramienta del perdedor.", "autor": "Socrates"},
-    {"frase": "La muerte podría ser la mayor de las bendiciones humanas.", "autor": "Socrates"}
+    {"frase": "La muerte podría ser la mayor de las bendiciones humanas.", "autor": "Socrates"},
+
+    #Kant:
+    {"frase": "Obra sólo según aquella máxima por la cual puedas querer que al mismo tiempo se convierta en ley universal.", "autor": "Kant"},
+    {"frase": "La libertad es aquella facultad que aumenta la utilidad de todas las demás facultades.", "autor": "Kant"},
+    {"frase": "La moral no es la doctrina de cómo hacernos felices, sino de cómo debemos llegar a ser dignos de la felicidad.", "autor": "Kant"},
+    {"frase": "El sabio puede cambiar de opinión. El necio, nunca.", "autor": "Kant"},
+    {"frase": "La ilustración es la salida del hombre de su autoculpable minoría de edad.", "autor": "Kant"},
+
+    #Platón:
+    {"frase": "El alma del hombre es inmortal e imperecedera.", "autor": "Platón"},
+    {"frase": "La música es para el alma lo que la gimnasia para el cuerpo.", "autor": "Platón"},
+    {"frase": "El conocimiento verdadero viene del interior.", "autor": "Platón"},
+    {"frase": "La ignorancia es la semilla del mal.", "autor": "Platón"},
+    {"frase": "No hay hombre tan cobarde a quien el amor no haga valiente.", "autor": "Platón"},
+
+    #Descartes:
+    {"frase": "Pienso, luego existo.", "autor": "Descartes"},
+    {"frase": "Para investigar la verdad es preciso dudar, en cuanto sea posible, de todas las cosas.", "autor": "Descartes"},
+    {"frase": "No hay nada repartido de modo más equitativo que la razón: todo el mundo está convencido de tener suficiente.", "autor": "Descartes"},
+    {"frase": "Conquistarme a mí mismo, más que al mundo.", "autor": "Descartes"},
+    {"frase": "Es prudente no fiarse por entero de quienes nos han engañado una vez.", "autor": "Descartes"}
+
 ]
     
 
-#Insertar frases en ChromaDB:
+#Insertar frases en ChromaDB, se ingresa los vectores y ChromaDB compara con las de "frases":
 for i, frase in enumerate(frases):
     embedding = embedder.encode(frase["frase"]).tolist()
     collection.add(
@@ -77,14 +99,39 @@ for i, frase in enumerate(frases):
 
 #Ingreso de la frase manual del usuario:
 fraseIngresada = input("Ingrese su frase: ")
+if fraseIngresada==" ":
+    print("Tenes que ingresar por lo menos una palabra.")
+    exit()
+    
 arreglarFrase = embedder.encode(fraseIngresada).tolist()
-resultados = collection.query(query_embeddings=[arreglarFrase], n_results=2)
+resultados = collection.query(query_embeddings=[arreglarFrase], n_results=3)
 
-# Mostrar resultados
+#Mostrar los resultados obtenidos:
 print("\nLa frase que ingresó el usuario es:", fraseIngresada)
-print("______________________________________________________________________")
+print('\t')
 print("\nLas frases más similares en la lista de frases de filósofos son:")
+print('\t')
 for frase, meta in zip(resultados["documents"][0], resultados["metadatas"][0]):
-    print(f'Frase:{frase}')
+    print("........................")
+    print(f'Frase: {frase}')
     print(f'\nFilosofo: {meta["autor"]}')
-    print("______________________________________________________________________")
+   
+#Frase del sabio:
+contexto = "\n".join([
+    f"- {frase} ({meta['autor']})"
+    for frase, meta in zip(resultados["documents"][0], resultados["metadatas"][0])
+])
+
+#Mensaje para gemini
+prompt = f"""Eres un sabio antiguo y una persona te dice: "{fraseIngresada}". 
+Contéstale usando las frases citadas en: {contexto}, mencionando el autor que corresponde a cada frase utilizada.
+Que el mensaje sea reflexivo, claro, profundo y breve."""
+
+#Enviar el prompt a gemini
+ejemplo = genai.GenerativeModel("gemini-1.5-flash")
+respuestaDeGemini = ejemplo.generate_content(prompt)
+
+# Mostrar la respuesta del sabio
+print("______________________________________________________________________")
+print("\nLa respuesta del sabio:\n")
+print(respuestaDeGemini.text)
